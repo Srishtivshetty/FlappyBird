@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private Image birdImage;
     [SerializeField] private Image flagImage;
-    [SerializeField] private Text gameOverText;
+    [SerializeField] private GameObject GameOverPanel;
 
     [Header("Game Settings")]
     public bool isGameActive = true;
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         restartButton.onClick.AddListener(RestartGame);
 
         // Hide Game Over UI initially
-        gameOverText.gameObject.SetActive(false);
+        GameOverPanel.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
     }
 
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Over!");
         isGameActive = false;
-        gameOverText.gameObject.SetActive(true);
+        GameOverPanel.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
     }
 
