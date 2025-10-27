@@ -1,30 +1,38 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("UI References")]
     [SerializeField] private Button jumpButton;
+    [SerializeField] private Button restartButton;
     [SerializeField] private Image birdImage;
     [SerializeField] private Image flagImage;
+    [SerializeField] private Text gameOverText;
 
+    [Header("Game Settings")]
     public bool isGameActive = true;
     public float jumpForce = 75f;
     public float gravity = -0.2f;
     public float pipeSpeed = -2f;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Start called.");
         jumpButton.onClick.AddListener(Clicked);
+        restartButton.onClick.AddListener(RestartGame);
+
+        // Hide Game Over UI initially
+        gameOverText.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
     }
 
     void Clicked()
     {
+        if (!isGameActive) return;
+
         Debug.Log("Button was clicked");
-        // jump the bird using movetowards
-        // birdImage.transform.position = Vector3.MoveTowards(birdImage.transform.position, birdImage.transform.position + new Vector3(0, jumpForce, 0), jumpForce);
         birdImage.transform.position += new Vector3(0, jumpForce, 0);
     }
 
@@ -41,19 +49,32 @@ public class GameManager : MonoBehaviour
         // apply gravity to the bird
         birdImage.transform.position += new Vector3(0, gravity, 0);
 
+        // collision detection
         foreach (var pipe in pipes)
         {
             if (AreRectsOverlapping(pipe.GetComponent<RectTransform>(), birdImage.GetComponent<RectTransform>()))
             {
-                Debug.Log("Images are overlapping!");
-                isGameActive = false;
+                GameOver();
             }
         }
     }
 
+    void GameOver()
+    {
+        Debug.Log("Game Over!");
+        isGameActive = false;
+        gameOverText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
+    }
+
+    void RestartGame()
+    {
+        Debug.Log("Restarting game...");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     bool AreRectsOverlapping(RectTransform rect1, RectTransform rect2)
     {
-        // Convert rects to world-space Rects
         Rect r1 = GetWorldRect(rect1);
         Rect r2 = GetWorldRect(rect2);
 
